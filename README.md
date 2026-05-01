@@ -5,9 +5,9 @@ Next.js + Turso on Vercel demo app
 ## Overview
 
 This repository contains a Next.js App Router demo that connects to Turso
-hosted SQLite from Vercel. It uses Drizzle ORM on top of `@libsql/client`,
-Server Components for reads, Server Actions for writes, and optimistic client
-updates for todo interactions.
+hosted SQLite from Vercel. It uses Drizzle ORM on top of Turso's
+`@tursodatabase/*` packages, Server Components for reads, Server Actions for
+writes, and optimistic client updates for todo interactions.
 
 ## Requirements
 
@@ -53,8 +53,18 @@ pnpm db:generate
 
 Copy `.env.example` and set the Turso values for the target environment.
 Production on Vercel should use `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`
-only. Local embedded replica development can also set `TURSO_SYNC_URL` and
-`TURSO_SYNC_INTERVAL`.
+only.
+
+The app selects a Turso driver from the environment:
+
+- Remote mode: `TURSO_DATABASE_URL=libsql://...` or `https://...`
+- Local file mode: `TURSO_DATABASE_URL=file:local-replica.db`
+- Local sync mode: `TURSO_DATABASE_URL=file:local-replica.db` plus
+  `TURSO_SYNC_URL=libsql://...`
+
+Local sync mode uses `@tursodatabase/sync`. Reads call `pull()` before querying,
+and writes call `push()` after the Server Action completes. There is no
+`TURSO_SYNC_INTERVAL`; sync is invocation-driven.
 
 ## Vercel
 
