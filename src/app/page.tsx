@@ -1,15 +1,28 @@
-export default function Home() {
+import { TodoApp } from "@/components/TodoApp";
+import { hasTursoConfig } from "@/lib/turso";
+import { listTodos, type Todo } from "@/lib/todos";
+
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const isConfigured = hasTursoConfig();
+  let todos: Todo[] = [];
+  let setupError: string | undefined;
+
+  if (isConfigured) {
+    try {
+      todos = await listTodos();
+    } catch (error) {
+      setupError =
+        error instanceof Error ? error.message : "Could not load todos.";
+    }
+  }
+
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col justify-center px-6 py-16">
-      <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">
-        Next.js + Turso + Vercel
-      </p>
-      <h1 className="mt-4 text-4xl font-semibold text-zinc-950 sm:text-5xl">
-        Demo app foundation
-      </h1>
-      <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-700">
-        The project shell is ready for the Turso-backed todo flow.
-      </p>
-    </main>
+    <TodoApp
+      initialTodos={todos}
+      isConfigured={isConfigured}
+      setupError={setupError}
+    />
   );
 }
