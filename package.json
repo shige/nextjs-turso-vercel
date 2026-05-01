@@ -17,8 +17,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@libsql/client": "0.17.3",
-    "drizzle-orm": "0.45.2",
+    "@tursodatabase/database": "0.5.3",
+    "@tursodatabase/serverless": "1.1.2",
+    "@tursodatabase/sync": "0.5.3",
+    "drizzle-orm": "1.0.0-rc.1",
     "next": "16.2.4",
     "react": "19.2.5",
     "react-dom": "19.2.5"
@@ -28,7 +30,7 @@
     "@types/node": "25.6.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "drizzle-kit": "0.31.10",
+    "drizzle-kit": "1.0.0-rc.1",
     "tailwindcss": "4.2.4",
     "typescript": "6.0.3"
   }

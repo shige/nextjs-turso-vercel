@@ -11,6 +11,7 @@ out
 *.db-wal
 *.db-shm
 *.db-info
+*.db-changes
 
 next-env.d.ts
 *.tsbuildinfo
