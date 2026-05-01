@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getTurso } from "./turso";
+import { getTurso, syncTurso } from "./turso";
 
 export type Todo = {
   id: number;
@@ -16,6 +16,8 @@ export type TodoActionResult = {
 };
 
 export async function listTodos(): Promise<Todo[]> {
+  await syncTurso();
+
   const result = await getTurso().execute(
     "SELECT id, text, completed, created_at FROM todos ORDER BY created_at DESC, id DESC",
   );
@@ -39,6 +41,7 @@ export async function addTodo(formData: FormData): Promise<TodoActionResult> {
     sql: "INSERT INTO todos (text) VALUES (?)",
     args: [text],
   });
+  await syncTurso();
 
   revalidatePath("/");
   return { ok: true };
@@ -49,6 +52,7 @@ export async function toggleTodo(id: number): Promise<TodoActionResult> {
     sql: "UPDATE todos SET completed = 1 - completed WHERE id = ?",
     args: [id],
   });
+  await syncTurso();
 
   revalidatePath("/");
   return { ok: true };
@@ -59,6 +63,7 @@ export async function deleteTodo(id: number): Promise<TodoActionResult> {
     sql: "DELETE FROM todos WHERE id = ?",
     args: [id],
   });
+  await syncTurso();
 
   revalidatePath("/");
   return { ok: true };

@@ -10,6 +10,7 @@ out
 *.db-journal
 *.db-wal
 *.db-shm
+*.db-info
 
 next-env.d.ts
 *.tsbuildinfo

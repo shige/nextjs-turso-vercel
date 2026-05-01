@@ -22,11 +22,17 @@ export function getTurso() {
       ...(syncUrl
         ? {
             syncUrl,
-            syncInterval: Number(process.env.TURSO_SYNC_INTERVAL ?? 60),
+            syncInterval: Number(process.env.TURSO_SYNC_INTERVAL ?? 60) * 1000,
           }
         : {}),
     });
   }
 
   return client;
+}
+
+export async function syncTurso() {
+  if (process.env.TURSO_SYNC_URL) {
+    await getTurso().sync();
+  }
 }
