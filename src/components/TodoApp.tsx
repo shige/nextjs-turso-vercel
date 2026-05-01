@@ -1,6 +1,6 @@
 "use client";
 
-import { useOptimistic, useState } from "react";
+import { useOptimistic, useState, useTransition } from "react";
 import type { Todo } from "@/lib/todos";
 import { TodoForm } from "./TodoForm";
 import { TodoList } from "./TodoList";
@@ -22,6 +22,7 @@ export function TodoApp({
   setupError,
 }: TodoAppProps) {
   const [message, setMessage] = useState<string | undefined>(setupError);
+  const [, startOptimisticTransition] = useTransition();
   const [optimisticTodos, addOptimisticTodo] = useOptimistic(
     initialTodos,
     (todos, action: OptimisticAction) => {
@@ -73,14 +74,16 @@ export function TodoApp({
           disabled={!isConfigured}
           onError={setMessage}
           onOptimisticAdd={(text) => {
-            addOptimisticTodo({
-              type: "add",
-              todo: {
-                id: -Date.now(),
-                text,
-                completed: false,
-                createdAt: new Date().toISOString(),
-              },
+            startOptimisticTransition(() => {
+              addOptimisticTodo({
+                type: "add",
+                todo: {
+                  id: -Date.now(),
+                  text,
+                  completed: false,
+                  createdAt: new Date().toISOString(),
+                },
+              });
             });
           }}
         />
@@ -89,8 +92,16 @@ export function TodoApp({
           disabled={!isConfigured}
           todos={optimisticTodos}
           onError={setMessage}
-          onOptimisticDelete={(id) => addOptimisticTodo({ type: "delete", id })}
-          onOptimisticToggle={(id) => addOptimisticTodo({ type: "toggle", id })}
+          onOptimisticDelete={(id) => {
+            startOptimisticTransition(() => {
+              addOptimisticTodo({ type: "delete", id });
+            });
+          }}
+          onOptimisticToggle={(id) => {
+            startOptimisticTransition(() => {
+              addOptimisticTodo({ type: "toggle", id });
+            });
+          }}
         />
       </div>
     </main>
