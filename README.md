@@ -5,9 +5,9 @@ Next.js + Turso on Vercel demo app
 ## Overview
 
 This repository contains a Next.js App Router demo that connects to Turso
-hosted SQLite from Vercel. It uses `@libsql/client` directly, Server Components
-for reads, Server Actions for writes, and optimistic client updates for todo
-interactions.
+hosted SQLite from Vercel. It uses Drizzle ORM on top of `@libsql/client`,
+Server Components for reads, Server Actions for writes, and optimistic client
+updates for todo interactions.
 
 ## Requirements
 
@@ -29,12 +29,24 @@ Open `http://localhost:3000`.
 
 ## Database Setup
 
-Create the Turso database, create an auth token, then apply the schema:
+Create the Turso database, create an auth token, then apply the Drizzle
+migrations:
 
 ```bash
 turso db create nextjs-turso-vercel
 turso db tokens create nextjs-turso-vercel
-turso db shell nextjs-turso-vercel < src/lib/schema.sql
+pnpm db:migrate
+```
+
+`drizzle-kit migrate` should target the remote Turso database. If local
+development uses `TURSO_DATABASE_URL=file:local-replica.db`, keep a separate
+remote-only environment file for migrations and load it before running
+`pnpm db:migrate`.
+
+Generate new migrations after schema changes with:
+
+```bash
+pnpm db:generate
 ```
 
 ## Environment
